@@ -193,7 +193,7 @@
     }
 
     .instructions h3::before {
-      content: "✨";
+      /* content: "✨"; */
       font-size: 20px;
     }
 
@@ -430,7 +430,7 @@
       font: var(--leo-font-x-small-regular);
       color: var(--text-secondary);
       margin-bottom: var(--leo-spacing-l);
-      font-style: italic;
+      /* font-style: italic; */
       line-height: 1.5;
     }
 
@@ -1125,16 +1125,14 @@
 
           <!-- Instructions Section -->
           <div class="instructions">
-            <h3>How to Use This Card Editor</h3>
+            <h3>Instructions</h3>
             <ol>
               <li><strong>Add and Edit Cards:</strong> Click "Add New Card" to create cards, then click on any text to
                 edit titles, descriptions, and URLs.</li>
               <li><strong>Import JSON:</strong> Click "Import JSON" to load an existing card configuration from a
                 previous session.</li>
-              <li><strong>Share Your Work:</strong> The JSON output below updates automatically and can be shared with
+              <li><strong>Share Your Work:</strong> The JSON output below can be shared with
                 others to reproduce your card layout.</li>
-              <li><strong>Add Images:</strong> Click thumbnail areas or "Change" buttons to add image URLs to your
-                cards.</li>
             </ol>
             <div class="warning">
               <strong>Important:</strong> Your work is not automatically saved. Do not refresh the page or navigate
@@ -1194,7 +1192,7 @@
                         <span v-else class="thumbnail-placeholder"></span>
                       </div>
                       <button class="thumbnail-upload-btn" @click="focusThumbnailInput(cardIndex, itemIndex)">
-                        {{ item.thumbnail ? 'Change' : 'Add Image' }}
+                        {{ item.thumbnail ? 'Edit' : 'Add Image' }}
                       </button>
                     </div>
 
