@@ -285,10 +285,12 @@
       display: flex;
       gap: var(--leo-spacing-l);
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .add-card-btn,
-    .import-btn {
+    .import-btn,
+    .reset-btn {
       padding: var(--leo-spacing-l) var(--leo-spacing-2xl);
       border: none;
       border-radius: var(--leo-radius-l);
@@ -321,25 +323,54 @@
       box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
     }
 
+    .reset-btn {
+      background: linear-gradient(135deg, #ff9500 0%, #ff6b35 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+    }
+
+    .reset-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
+    }
+
+    .autosave-indicator {
+      font: var(--leo-font-x-small-regular);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--leo-spacing-m);
+      padding: var(--leo-spacing-m) var(--leo-spacing-l);
+      background: var(--surface-highlight);
+      border-radius: var(--leo-radius-l);
+      border: 1px solid var(--border-color);
+    }
+
+    .autosave-indicator.saving {
+      color: var(--leo-color-primitive-primary-40);
+    }
+
     .cards-grid {
       display: grid;
       gap: var(--leo-spacing-2xl);
       grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
     }
 
-    /* Editor Card Styling - Cleaner and more elegant */
+    /* NEW: Editor Card Styling - Matching Preview Design */
     .editor-card {
-      background: var(--surface-color);
       border-radius: var(--leo-radius-xl);
-      padding: var(--leo-spacing-2xl);
-      border: 1px solid var(--border-color);
+      padding: 4px;
+      background-color: rgb(from var(--leo-color-container-background) r g b / 55%);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
       transition: all 0.3s ease;
       position: relative;
       box-shadow: var(--leo-effect-elevation-01);
     }
 
     .editor-card:hover {
-      border-color: var(--leo-color-primitive-primary-40);
       transform: translateY(-2px);
       box-shadow: var(--leo-effect-elevation-03);
     }
@@ -347,108 +378,311 @@
     .editor-card.empty-card {
       border: 2px dashed var(--border-color);
       background: linear-gradient(135deg, var(--surface-highlight) 0%, var(--surface-color) 100%);
+      padding: var(--leo-spacing-2xl);
     }
 
-    .card-header {
-      margin-bottom: var(--leo-spacing-2xl);
-    }
-
-    .card-title-wrapper {
-      position: relative;
-      margin-bottom: var(--leo-spacing-xl);
-    }
-
-    .card-title-input {
+    /* Card Title - Matching Preview Style */
+    .editor-card-title {
       font: var(--leo-font-heading-h4);
       color: var(--text-primary);
+      margin-bottom: 0;
+      padding: var(--leo-spacing-xl);
+      padding-bottom: var(--leo-spacing-l);
+      line-height: 1.3;
       border: 2px solid transparent;
+      border-radius: var(--leo-radius-l);
+      background: transparent;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .editor-card-title:hover,
+    .editor-card-title:focus {
+      background: rgba(67, 79, 207, 0.05);
+      border-color: var(--leo-color-primitive-primary-40);
+      outline: none;
+    }
+
+    .editor-card-title::placeholder {
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* Card Section - Matching Preview */
+    .editor-card-section {
+      border-radius: var(--leo-radius-l);
+      background: var(--leo-color-container-background);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    /* Editor Item - Matching Preview Link Style */
+    .editor-item {
+      display: flex;
+      gap: var(--leo-spacing-xl);
+      text-decoration: none;
+      color: var(--text-primary);
+      padding: var(--leo-spacing-m);
+      border-bottom: solid 1px var(--leo-color-divider-subtle);
+      transition: all 0.2s;
+      align-items: center;
+      position: relative;
+      cursor: move;
+    }
+
+    .editor-item:last-child {
+      border-bottom: none;
+    }
+
+    .editor-item:hover {
+      background-color: var(--surface-highlight);
+    }
+
+    .item-drag-handle {
+      position: absolute;
+      left: var(--leo-spacing-m);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: grab;
+      line-height: 1;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 2;
+    }
+
+    .editor-item:hover .item-drag-handle {
+      opacity: 1;
+    }
+
+    .item-drag-handle:active {
+      cursor: grabbing;
+    }
+
+    /* Thumbnail - Matching Preview */
+    .item-thumbnail-editor {
+      flex: 0 0 56px;
+      height: 56px;
+      width: 56px;
+      overflow: hidden;
+      border-radius: var(--leo-radius-l);
+      border: solid 1px var(--leo-color-divider-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface-highlight);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-left: var(--leo-spacing-xl);
+    }
+
+    .item-thumbnail-editor:hover {
+      border-color: var(--leo-color-primitive-primary-40);
+      transform: scale(1.02);
+    }
+
+    .item-thumbnail-editor img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumbnail-placeholder {
+      color: var(--text-secondary);
+      font-size: 24px;
+    }
+
+    /* Item Info - Matching Preview */
+    .item-info-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .item-title-editor {
+      font: var(--leo-font-default-semibold);
+      color: var(--text-primary);
+      line-height: 1.3;
+      border: none;
       background: transparent;
       outline: none;
-      width: 100%;
-      padding: var(--leo-spacing-l) var(--leo-spacing-xl);
-      border-radius: var(--leo-radius-l);
+      padding: 2px 4px;
+      border-radius: 4px;
       transition: all 0.2s;
     }
 
-    .card-title-input:hover {
-      background: var(--surface-highlight);
-      border-color: var(--border-color);
+    .item-title-editor:hover,
+    .item-title-editor:focus {
+      background: rgba(67, 79, 207, 0.05);
     }
 
-    .card-title-input:focus {
-      background: var(--surface-color);
-      border-color: var(--leo-color-primitive-primary-40);
-      box-shadow: 0 0 0 4px var(--leo-color-primitive-primary-95);
+    .item-title-editor::placeholder {
+      color: var(--text-secondary);
+      font-style: italic;
     }
 
-    .edit-hint {
+    .item-description-editor {
+      font: var(--leo-font-x-small-regular);
+      color: var(--leo-color-text-tertiary);
+      line-height: 1.4;
+      border: none;
+      background: transparent;
+      outline: none;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.2s;
+      resize: none;
+      overflow: hidden;
+    }
+
+    .item-description-editor:hover,
+    .item-description-editor:focus {
+      background: rgba(67, 79, 207, 0.05);
+    }
+
+    .item-description-editor::placeholder {
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* Item Controls */
+    .item-controls {
       position: absolute;
-      top: -10px;
-      right: 10px;
+      right: var(--leo-spacing-m);
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: var(--leo-spacing-s);
+      opacity: 0;
+      transition: opacity 0.2s;
+      z-index: 2;
+    }
+
+    .editor-item:hover .item-controls {
+      opacity: 1;
+    }
+
+    .item-control-btn {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      /* width: 24px; */
+      padding: 8px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+    }
+
+    .item-control-btn:hover {
+      transform: scale(1.1);
+      background: var(--surface-highlight);
+    }
+
+    .item-control-btn.delete:hover {
+      background: #ff3b30;
+      color: white;
+      border-color: #ff3b30;
+    }
+
+    .item-control-btn.url:hover {
       background: var(--leo-color-primitive-primary-40);
       color: white;
-      font: var(--leo-font-x-small-regular);
-      font-weight: 600;
-      padding: 4px var(--leo-spacing-m);
-      border-radius: 6px;
-      opacity: 0;
-      transition: all 0.2s;
-      pointer-events: none;
-      transform: translateY(5px);
+      border-color: var(--leo-color-primitive-primary-40);
     }
 
-    .card-title-wrapper:hover .edit-hint {
-      opacity: 1;
-      transform: translateY(0);
+    .item-control-btn.image:hover {
+      background: #34c759;
+      color: white;
+      border-color: #34c759;
     }
 
-    .card-meta {
-      padding: var(--leo-spacing-xl);
-      background: linear-gradient(135deg, var(--surface-highlight) 0%, rgba(67, 79, 207, 0.02) 100%);
-      border-radius: var(--leo-radius-l);
-      border: 1px solid var(--border-color);
-    }
-
-    .form-group {
-      margin-bottom: var(--leo-spacing-xl);
-    }
-
-    .form-group:last-child {
-      margin-bottom: 0;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: var(--leo-spacing-m);
-      font: var(--leo-font-small-semibold);
-      color: var(--text-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .form-description {
-      font: var(--leo-font-x-small-regular);
-      color: var(--text-secondary);
-      margin-bottom: var(--leo-spacing-l);
-      /* font-style: italic; */
-      line-height: 1.5;
-    }
-
-    .form-input {
-      width: 100%;
+    /* Card Controls */
+    .card-controls {
+      margin-top: var(--leo-spacing-l);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--leo-spacing-xl);
       padding: var(--leo-spacing-l) var(--leo-spacing-xl);
-      border: 1px solid var(--border-color);
+      background: var(--surface-highlight);
       border-radius: var(--leo-radius-l);
-      font: var(--leo-font-small-regular);
-      transition: all 0.2s;
-      background: var(--surface-color);
-      color: var(--text-primary);
+      border: 1px solid var(--border-color);
     }
 
-    .form-input:focus {
+    .card-meta-inputs {
+      display: flex;
+      gap: var(--leo-spacing-l);
+      align-items: center;
+      flex: 1;
+    }
+
+    .card-key-input {
+      font: var(--leo-font-small-regular);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      background: var(--surface-color);
+      padding: var(--leo-spacing-m) var(--leo-spacing-l);
+      border-radius: var(--leo-spacing-m);
+      transition: all 0.2s;
+      min-width: 150px;
+    }
+
+    .card-key-input:focus {
       outline: none;
       border-color: var(--leo-color-primitive-primary-40);
-      box-shadow: 0 0 0 3px var(--leo-color-primitive-primary-95);
+      box-shadow: 0 0 0 2px var(--leo-color-primitive-primary-95);
+    }
+
+    .card-action-buttons {
+      display: flex;
+      gap: var(--leo-spacing-m);
+    }
+
+    .add-item-btn {
+      padding: var(--leo-spacing-m) var(--leo-spacing-l);
+      background: linear-gradient(135deg, #34c759 0%, #10b981 100%);
+      color: white;
+      border: none;
+      border-radius: var(--leo-spacing-m);
+      font: var(--leo-font-small-semibold);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3);
+    }
+
+    .add-item-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.4);
+    }
+
+    .delete-card-btn {
+      background: linear-gradient(135deg, #ff3b30 0%, #dc2626 100%);
+      color: white;
+      border: none;
+      padding: var(--leo-spacing-m) var(--leo-spacing-l);
+      border-radius: var(--leo-spacing-m);
+      cursor: pointer;
+      font: var(--leo-font-small-semibold);
+      white-space: nowrap;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
+    }
+
+    .delete-card-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
     }
 
     .empty-card-content {
@@ -472,278 +706,6 @@
     .empty-card-hint {
       font: var(--leo-font-default-regular);
       color: var(--text-secondary);
-    }
-
-    .items-list {
-      display: flex;
-      flex-direction: column;
-      gap: var(--leo-spacing-l);
-      background: linear-gradient(135deg, var(--surface-highlight) 0%, rgba(67, 79, 207, 0.02) 100%);
-      border-radius: var(--leo-radius-xl);
-      /* padding: var(--leo-spacing-xl); */
-      /* border: 1px solid var(--border-color); */
-    }
-
-    .items-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--leo-spacing-xl);
-      padding-bottom: var(--leo-spacing-l);
-      border-bottom: 2px solid var(--border-subtle);
-    }
-
-    .items-count {
-      font: var(--leo-font-default-semibold);
-      color: var(--text-secondary);
-      background: var(--surface-color);
-      padding: var(--leo-spacing-m) var(--leo-spacing-l);
-      border-radius: var(--leo-radius-l);
-    }
-
-    .add-item-btn {
-      padding: var(--leo-spacing-l) var(--leo-spacing-xl);
-      background: linear-gradient(135deg, #34c759 0%, #10b981 100%);
-      color: white;
-      border: none;
-      border-radius: var(--leo-radius-l);
-      font: var(--leo-font-small-semibold);
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3);
-    }
-
-    .add-item-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.4);
-    }
-
-    /* Editor Item Styling - More elegant */
-    .editor-item {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--leo-spacing-xl);
-      padding: var(--leo-spacing-xl);
-      border-radius: var(--leo-radius-xl);
-      border: 1px solid var(--border-subtle);
-      background: var(--surface-color);
-      transition: all 0.2s;
-      cursor: move;
-      position: relative;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    }
-
-    .editor-item:hover {
-      background: var(--surface-color);
-      border-color: var(--leo-color-primitive-primary-40);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-    }
-
-    .item-drag-handle {
-      position: absolute;
-      left: var(--leo-spacing-l);
-      top: var(--leo-spacing-xl);
-      color: var(--text-secondary);
-      font-size: 18px;
-      cursor: grab;
-      line-height: 1;
-      user-select: none;
-      opacity: 0.6;
-      transition: opacity 0.2s;
-    }
-
-    .editor-item:hover .item-drag-handle {
-      opacity: 1;
-    }
-
-    .item-drag-handle:active {
-      cursor: grabbing;
-    }
-
-    .item-thumbnail-section {
-      margin-left: var(--leo-spacing-xl);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--leo-spacing-l);
-    }
-
-    .item-thumbnail-editor {
-      width: 56px;
-      height: 56px;
-      border-radius: var(--leo-radius-l);
-      overflow: hidden;
-      flex-shrink: 0;
-      background: var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px dashed transparent;
-      transition: all 0.2s;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .item-thumbnail-editor:hover {
-      border-color: var(--leo-color-primitive-primary-40);
-      transform: scale(1.05);
-    }
-
-    .item-thumbnail-editor img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .thumbnail-placeholder {
-      color: var(--text-secondary);
-      font-size: 24px;
-    }
-
-    .thumbnail-upload-btn {
-      font: var(--leo-font-x-small-regular);
-      font-weight: 600;
-      padding: 6px var(--leo-spacing-l);
-      background: linear-gradient(135deg, var(--leo-color-primitive-primary-40) 0%, #6366f1 100%);
-      color: white;
-      border: none;
-      border-radius: var(--leo-radius-l);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s;
-      box-shadow: 0 2px 6px rgba(67, 79, 207, 0.3);
-    }
-
-    .thumbnail-upload-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(67, 79, 207, 0.4);
-    }
-
-    .item-content-editor {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: var(--leo-spacing-l);
-    }
-
-    .item-title-editor,
-    .item-description-editor {
-      border: 1px solid transparent;
-      background: transparent;
-      outline: none;
-      padding: var(--leo-spacing-l) var(--leo-spacing-xl);
-      border-radius: var(--leo-radius-l);
-      transition: all 0.2s;
-    }
-
-    .item-title-editor {
-      font: var(--leo-font-large-semibold);
-      color: var(--text-primary);
-    }
-
-    .item-description-editor {
-      font: var(--leo-font-default-regular);
-      color: var(--text-secondary);
-      resize: none;
-      min-height: 50px;
-    }
-
-    .item-title-editor:hover,
-    .item-title-editor:focus,
-    .item-description-editor:hover,
-    .item-description-editor:focus {
-      background: var(--surface-highlight);
-      border-color: var(--leo-color-primitive-primary-40);
-      box-shadow: 0 0 0 2px var(--leo-color-primitive-primary-95);
-    }
-
-    .item-url-section {
-      /* margin-top: var(--leo-spacing-l); */
-      padding: var(--leo-spacing-xl);
-      background: linear-gradient(135deg, var(--surface-highlight) 0%, rgba(67, 79, 207, 0.02) 100%);
-      border-radius: var(--leo-radius-l);
-      /* border: 1px solid var(--border-color); */
-    }
-
-    .url-label {
-      display: flex;
-      align-items: center;
-      gap: var(--leo-spacing-m);
-      font: var(--leo-font-x-small-regular);
-      font-weight: 600;
-      color: var(--leo-color-primitive-primary-40);
-      margin-bottom: var(--leo-spacing-m);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .url-input {
-      width: 100%;
-      padding: var(--leo-spacing-l) var(--leo-spacing-xl);
-      border: 1px solid var(--border-color);
-      border-radius: var(--leo-radius-l);
-      font: var(--leo-font-small-regular);
-      background: var(--surface-color);
-      color: var(--text-primary);
-      transition: all 0.2s;
-    }
-
-    .url-input:focus {
-      outline: none;
-      border-color: var(--leo-color-primitive-primary-40);
-      box-shadow: 0 0 0 2px var(--leo-color-primitive-primary-95);
-    }
-
-    .item-controls {
-      display: flex;
-      flex-direction: column;
-      gap: var(--leo-spacing-l);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .editor-item:hover .item-controls {
-      opacity: 1;
-    }
-
-    .delete-item-btn,
-    .delete-card-btn {
-      background: linear-gradient(135deg, #ff3b30 0%, #dc2626 100%);
-      color: white;
-      border: none;
-      padding: var(--leo-spacing-l) var(--leo-spacing-xl);
-      border-radius: var(--leo-radius-l);
-      cursor: pointer;
-      font: var(--leo-font-small-semibold);
-      white-space: nowrap;
-      transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
-    }
-
-    .delete-item-btn:hover,
-    .delete-card-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
-    }
-
-    .card-controls {
-      margin-top: var(--leo-spacing-2xl);
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: var(--leo-spacing-xl);
-      padding-top: var(--leo-spacing-xl);
-      /* border-top: 1px solid var(--border-color); */
-    }
-
-    .card-controls-left {
-      flex: 1;
-    }
-
-    .card-controls-right {
-      display: flex;
-      gap: var(--leo-spacing-l);
     }
 
     /* Preview Panel Styling */
@@ -965,6 +927,30 @@
       opacity: 0.6;
     }
 
+    /* URL Modal Styles */
+    .url-modal {
+      max-width: 500px;
+      width: 90vw;
+    }
+
+    .url-input-modal {
+      width: 100%;
+      padding: var(--leo-spacing-l) var(--leo-spacing-xl);
+      border: 1px solid var(--border-color);
+      border-radius: var(--leo-radius-l);
+      font: var(--leo-font-default-regular);
+      background: var(--surface-color);
+      color: var(--text-primary);
+      transition: all 0.2s;
+      margin-bottom: var(--leo-spacing-xl);
+    }
+
+    .url-input-modal:focus {
+      outline: none;
+      border-color: var(--leo-color-primitive-primary-40);
+      box-shadow: 0 0 0 2px var(--leo-color-primitive-primary-95);
+    }
+
     /* Confirmation modal styles */
     .modal-overlay {
       position: fixed;
@@ -1105,6 +1091,16 @@
       .preview-content-wrapper {
         padding: var(--leo-spacing-xl);
       }
+
+      .card-meta-inputs {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .card-action-buttons {
+        justify-content: stretch;
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -1131,18 +1127,24 @@
                 edit titles, descriptions, and URLs.</li>
               <li><strong>Import JSON:</strong> Click "Import JSON" to load an existing card configuration from a
                 previous session.</li>
+              <li><strong>Auto-Save:</strong> Your work is automatically saved to browser storage every few seconds.</li>
               <li><strong>Share Your Work:</strong> The JSON output below can be shared with
                 others to reproduce your card layout.</li>
             </ol>
             <div class="warning">
-              <strong>Important:</strong> Your work is not automatically saved. Do not refresh the page or navigate
-              away, or you will lose all your changes!
+              Your work is automatically saved to your browser's local storage, but exporting the JSON is recommended for backup.
             </div>
           </div>
 
           <div class="header-controls">
             <button @click="showImportModal" class="import-btn">📥 Import JSON</button>
             <button @click="addCard" class="add-card-btn">+ Add New Card</button>
+            <button @click="confirmReset" class="reset-btn">🔄 Reset Workspace</button>
+            <div class="autosave-indicator" :class="{ saving: isSaving }">
+              <span>{{ saveStatus }}</span>
+              <span v-if="isSaving">💾</span>
+              <span v-else>✅</span>
+            </div>
           </div>
 
           <br />
@@ -1150,24 +1152,7 @@
           <div class="cards-grid" ref="cardsGrid">
             <div v-for="(card, cardIndex) in cards" :key="card.id"
               :class="['editor-card', { 'empty-card': card.items.length === 0 }]">
-              <!-- Card Title -->
-              <div class="card-header">
-                <div class="card-title-wrapper">
-                  <input v-model="card.title" class="card-title-input" placeholder="Click to edit card title..." />
-                  <span class="edit-hint">Click to edit</span>
-                </div>
-
-                <!-- Card Metadata -->
-                <div class="card-meta">
-                  <div class="form-group">
-                    <label class="form-label">Card ID</label>
-                    <div class="form-description">This is the unique card identifier for code purposes. Users will not
-                      see this.</div>
-                    <input v-model="card.key" class="form-input" placeholder="unique-card-id" />
-                  </div>
-                </div>
-              </div>
-
+              
               <!-- Empty Card State -->
               <div v-if="card.items.length === 0" class="empty-card-content">
                 <div class="empty-card-icon">📝</div>
@@ -1175,58 +1160,55 @@
                 <div class="empty-card-hint">Add items to populate this card</div>
               </div>
 
-              <!-- Card with Items -->
-              <div v-else class="card-section">
-                <div class="items-header">
-                  <span class="items-count">{{ card.items.length }} item{{ card.items.length !== 1 ? 's' : '' }}</span>
-                </div>
+              <!-- Card with Items - Matching Preview Design -->
+              <div v-else>
+                <!-- Card Title - Matching Preview Style -->
+                <input v-model="card.title" class="editor-card-title" placeholder="Click to edit card title..." />
+                
+                <!-- Card Section - Matching Preview -->
+                <section class="editor-card-section">
+                  <div :ref="el => sortableRefs[cardIndex] = el">
+                    <div v-for="(item, itemIndex) in card.items" :key="item.id" class="editor-item" :data-id="item.id">
+                      <span class="item-drag-handle">⋮⋮</span>
 
-                <div :ref="el => sortableRefs[cardIndex] = el" class="items-list">
-                  <div v-for="(item, itemIndex) in card.items" :key="item.id" class="editor-item" :data-id="item.id">
-                    <span class="item-drag-handle">⋮⋮</span>
-
-                    <div class="item-thumbnail-section">
-                      <div class="item-thumbnail-editor" @click="focusThumbnailInput(cardIndex, itemIndex)">
+                      <!-- Thumbnail - Matching Preview -->
+                      <span class="item-thumbnail-editor" @click="editThumbnail(cardIndex, itemIndex)">
                         <img v-if="item.thumbnail" :src="item.thumbnail" :alt="item.title"
                           @error="$event.target.style.display = 'none'" />
-                        <span v-else class="thumbnail-placeholder"></span>
-                      </div>
-                      <button class="thumbnail-upload-btn" @click="focusThumbnailInput(cardIndex, itemIndex)">
-                        {{ item.thumbnail ? 'Edit' : 'Add Image' }}
-                      </button>
-                    </div>
+                        <span v-else class="thumbnail-placeholder">📷</span>
+                      </span>
 
-                    <div class="item-content-editor">
-                      <input v-model="item.title" class="item-title-editor" placeholder="Click to edit item title..." />
-                      <textarea v-model="item.description" class="item-description-editor"
-                        placeholder="Click to edit description..." rows="2"></textarea>
+                      <!-- Item Info - Matching Preview -->
+                      <span class="item-info-editor">
+                        <input v-model="item.title" class="item-title-editor" placeholder="Click to edit title..." />
+                        <textarea v-model="item.description" class="item-description-editor"
+                          placeholder="Click to edit description..." rows="1" @input="autoResize"></textarea>
+                      </span>
 
-                      <div class="item-url-section">
-                        <div class="url-label">
+                      <!-- Item Controls -->
+                      <div class="item-controls">
+                        <button @click="editUrl(cardIndex, itemIndex)" class="item-control-btn url" title="Edit URL">
                           🔗 Link URL
-                        </div>
-                        <input v-model="item.url" class="url-input" placeholder="https://example.com" type="url" />
+                        </button>
+                        <button @click="editThumbnail(cardIndex, itemIndex)" class="item-control-btn image" title="Edit Image">
+                          📷 Thumbnail
+                        </button>
+                        <button @click="confirmDeleteItem(cardIndex, itemIndex)" class="item-control-btn delete" title="Delete Item">
+                          🗑️ Delete Item
+                        </button>
                       </div>
-
-                      <!-- Hidden thumbnail URL input -->
-                      <input v-model="item.thumbnail" :ref="el => thumbnailInputRefs[`${cardIndex}-${itemIndex}`] = el"
-                        style="position: absolute; left: -9999px; opacity: 0;" placeholder="Image URL" type="url"
-                        @blur="onThumbnailInputBlur" />
-                    </div>
-
-                    <div class="item-controls">
-                      <button @click="confirmDeleteItem(cardIndex, itemIndex)" class="delete-item-btn">
-                        Delete Item
-                      </button>
                     </div>
                   </div>
-                </div>
+                </section>
               </div>
 
               <!-- Card Controls -->
               <div class="card-controls">
-                <div class="card-controls-left"></div>
-                <div class="card-controls-right">
+                <div class="card-meta-inputs">
+                  <label style="font: var(--leo-font-x-small-regular); color: var(--text-secondary);">Card ID:</label>
+                  <input v-model="card.key" class="card-key-input" placeholder="unique-card-id" />
+                </div>
+                <div class="card-action-buttons">
                   <button @click="addItem(cardIndex)" class="add-item-btn">+ Add Item</button>
                   <button @click="confirmDeleteCard(cardIndex)" class="delete-card-btn">Delete Card</button>
                 </div>
@@ -1280,7 +1262,7 @@
                         <span class="thumbnail">
                           <img v-if="item.thumbnail" :src="item.thumbnail" :alt="item.title"
                             @error="$event.target.style.display = 'none'" />
-                          <span v-else class="thumbnail-placeholder-preview">🔗</span>
+                          <span v-else class="thumbnail-placeholder-preview">📷</span>
                         </span>
                         <span class="item-info">
                           <span class="title">{{ item.title || 'Untitled' }}</span>
@@ -1293,6 +1275,20 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- URL Edit Modal -->
+    <div v-if="showUrlModal" class="modal-overlay" @click="hideUrlModal">
+      <div class="modal url-modal" @click.stop>
+        <h3>Edit URL</h3>
+        <p>Enter the link URL for this item:</p>
+        <input v-model="editingUrl" class="url-input-modal" placeholder="https://example.com" type="url" 
+               @keyup.enter="saveUrl" @keyup.escape="hideUrlModal" ref="urlInput" />
+        <div class="modal-actions">
+          <button @click="hideUrlModal" class="modal-btn cancel">Cancel</button>
+          <button @click="saveUrl" class="modal-btn confirm" style="background: #34c759;">Save</button>
         </div>
       </div>
     </div>
@@ -1329,28 +1325,179 @@
 
     createApp({
       setup() {
+        const STORAGE_KEY = 'rewards-card-editor-workspace';
+        const THEME_KEY = 'rewards-card-editor-theme';
+        
         const cards = ref([]);
         const sortableRefs = ref([]);
         const sortableInstances = ref([]);
-        const thumbnailInputRefs = ref({});
         const isDarkMode = ref(false);
         const zoomLevel = ref(1.0);
         const cardsGrid = ref(null);
+        const urlInput = ref(null);
+        
+        // Modal states
         const showConfirmModal = ref(false);
         const confirmModalTitle = ref('');
         const confirmModalMessage = ref('');
         const pendingDeleteAction = ref(null);
         const showImportDialog = ref(false);
         const importJsonText = ref('');
+        const showUrlModal = ref(false);
+        const editingUrl = ref('');
+        const editingItemIndex = ref({ cardIndex: -1, itemIndex: -1 });
+
+        // Auto-save states
+        const isSaving = ref(false);
+        const saveStatus = ref('Auto-saved');
+        const saveTimeoutId = ref(null);
 
         // Resize functionality
         const isResizing = ref(false);
         const editorWidth = ref(window.innerWidth * 0.5);
-        const previewWidth = ref(window.innerWidth * 0.5 - 4); // subtract resize handle width
+        const previewWidth = ref(window.innerWidth * 0.5 - 4);
 
         let cardIdCounter = 1;
         let itemIdCounter = 1;
 
+        // Auto-save functionality
+        const saveToLocalStorage = () => {
+          try {
+            const dataToSave = {
+              cards: cards.value,
+              cardIdCounter,
+              itemIdCounter,
+              timestamp: new Date().toISOString()
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+            
+            isSaving.value = false;
+            saveStatus.value = 'Auto-saved';
+          } catch (error) {
+            console.error('Failed to save to localStorage:', error);
+            saveStatus.value = 'Save failed';
+          }
+        };
+
+        const debouncedSave = () => {
+          if (saveTimeoutId.value) {
+            clearTimeout(saveTimeoutId.value);
+          }
+          
+          isSaving.value = true;
+          saveStatus.value = 'Saving...';
+          
+          saveTimeoutId.value = setTimeout(() => {
+            saveToLocalStorage();
+          }, 1000);
+        };
+
+        const loadFromLocalStorage = () => {
+          try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+              const data = JSON.parse(saved);
+              cards.value = data.cards || [];
+              cardIdCounter = data.cardIdCounter || 1;
+              itemIdCounter = data.itemIdCounter || 1;
+              
+              // Initialize sortable after loading
+              nextTick(() => {
+                initializeSortable();
+              });
+              
+              return true;
+            }
+          } catch (error) {
+            console.error('Failed to load from localStorage:', error);
+          }
+          return false;
+        };
+
+        const clearLocalStorage = () => {
+          localStorage.removeItem(STORAGE_KEY);
+        };
+
+        const confirmReset = () => {
+          confirmModalTitle.value = 'Reset Workspace';
+          confirmModalMessage.value = 'Are you sure you want to reset your workspace? This will clear all cards and items and cannot be undone.';
+          pendingDeleteAction.value = () => resetWorkspace();
+          showConfirmModal.value = true;
+        };
+
+        const resetWorkspace = () => {
+          cards.value = [];
+          clearLocalStorage();
+          initializeData();
+          saveStatus.value = 'Workspace reset';
+        };
+
+        // Theme management
+        const loadTheme = () => {
+          try {
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            if (savedTheme) {
+              isDarkMode.value = savedTheme === 'dark';
+              document.body.setAttribute('data-theme', savedTheme);
+            }
+          } catch (error) {
+            console.error('Failed to load theme:', error);
+          }
+        };
+
+        const saveTheme = () => {
+          try {
+            const theme = isDarkMode.value ? 'dark' : 'light';
+            localStorage.setItem(THEME_KEY, theme);
+          } catch (error) {
+            console.error('Failed to save theme:', error);
+          }
+        };
+
+        // Auto-resize textarea
+        const autoResize = (event) => {
+          const textarea = event.target;
+          textarea.style.height = 'auto';
+          textarea.style.height = textarea.scrollHeight + 'px';
+        };
+
+        // URL editing
+        const editUrl = (cardIndex, itemIndex) => {
+          editingItemIndex.value = { cardIndex, itemIndex };
+          editingUrl.value = cards.value[cardIndex].items[itemIndex].url || '';
+          showUrlModal.value = true;
+          nextTick(() => {
+            if (urlInput.value) {
+              urlInput.value.focus();
+              urlInput.value.select();
+            }
+          });
+        };
+
+        const saveUrl = () => {
+          const { cardIndex, itemIndex } = editingItemIndex.value;
+          if (cardIndex >= 0 && itemIndex >= 0) {
+            cards.value[cardIndex].items[itemIndex].url = editingUrl.value;
+          }
+          hideUrlModal();
+        };
+
+        const hideUrlModal = () => {
+          showUrlModal.value = false;
+          editingUrl.value = '';
+          editingItemIndex.value = { cardIndex: -1, itemIndex: -1 };
+        };
+
+        // Thumbnail editing
+        const editThumbnail = (cardIndex, itemIndex) => {
+          const currentValue = cards.value[cardIndex].items[itemIndex].thumbnail || '';
+          const newValue = prompt('Enter image URL:', currentValue);
+          if (newValue !== null) {
+            cards.value[cardIndex].items[itemIndex].thumbnail = newValue;
+          }
+        };
+
+        // Resize functionality
         const startResize = (e) => {
           isResizing.value = true;
           document.addEventListener('mousemove', handleResize);
@@ -1362,7 +1509,7 @@
           if (isResizing.value) {
             const newEditorWidth = Math.max(300, Math.min(window.innerWidth - 350, e.clientX));
             editorWidth.value = newEditorWidth;
-            previewWidth.value = window.innerWidth - newEditorWidth - 4; // subtract resize handle width
+            previewWidth.value = window.innerWidth - newEditorWidth - 4;
           }
         };
 
@@ -1374,11 +1521,9 @@
 
         const handleWindowResize = () => {
           if (window.innerWidth <= 1024) {
-            // On mobile, reset to full width
             editorWidth.value = window.innerWidth;
             previewWidth.value = window.innerWidth;
           } else {
-            // Maintain proportions on desktop
             const totalWidth = window.innerWidth;
             const ratio = editorWidth.value / (editorWidth.value + previewWidth.value);
             editorWidth.value = totalWidth * ratio;
@@ -1388,7 +1533,9 @@
 
         const toggleTheme = () => {
           isDarkMode.value = !isDarkMode.value;
-          document.body.setAttribute('data-theme', isDarkMode.value ? 'dark' : 'light');
+          const theme = isDarkMode.value ? 'dark' : 'light';
+          document.body.setAttribute('data-theme', theme);
+          saveTheme();
         };
 
         const zoomIn = () => {
@@ -1412,11 +1559,8 @@
         const importJson = () => {
           try {
             const jsonData = JSON.parse(importJsonText.value);
-
-            // Clear existing cards
             cards.value = [];
 
-            // Convert JSON back to card format
             Object.keys(jsonData).forEach(key => {
               const cardData = jsonData[key];
               const newCard = {
@@ -1435,12 +1579,11 @@
             });
 
             hideImportModal();
-
-            // Initialize sortable for imported cards
             nextTick(() => {
               initializeSortable();
             });
 
+            saveToLocalStorage();
             alert('JSON imported successfully!');
           } catch (error) {
             alert('Invalid JSON format. Please check your input and try again.');
@@ -1448,7 +1591,6 @@
           }
         };
 
-        // Initialize with clean sample data
         const initializeData = () => {
           cards.value = [
             {
@@ -1469,27 +1611,6 @@
                   description: "Download and explore to receive an exclusive Brave Wearable",
                   url: "https://decentraland.org/?utm_org=dcl&utm_source=brave&utm_medium=paid&utm_campaign=brandlaunch&utm_term=offerwall&utm_content=brave_wearable",
                   thumbnail: "https://rewards.brave.com/cards/decentraland.png"
-                },
-                {
-                  id: itemIdCounter++,
-                  title: "Pudgy Penguins: Crush It!",
-                  description: "450 Pop Points Bonus - Only for Brave users!",
-                  url: "https://www.pudgypop.com/signup?r=BAT",
-                  thumbnail: "https://rewards.brave.com/cards/thumb-pudgy-penguins-crush-it.png"
-                },
-                {
-                  id: itemIdCounter++,
-                  title: "Karate Combat: Game On!",
-                  description: "$KARATE Fans, Your Loyalty Pays Off! Grab VIP Benefits Now.",
-                  url: "https://www.karate.com/app",
-                  thumbnail: "https://rewards.brave.com/cards/thumb-karate-fans-your-loyalty.png"
-                },
-                {
-                  id: itemIdCounter++,
-                  title: "Believe in something, CHOMP it",
-                  description: "Get rewarded by sharing your opinions and beliefs.",
-                  url: "https://chomp.games/?utm_source=brave&utm_medium=offerwall",
-                  thumbnail: "https://rewards.brave.com/cards/thumb-believe-in-somthing-chomp-it.png"
                 }
               ]
             }
@@ -1543,14 +1664,12 @@
             thumbnail: ''
           });
 
-          // Initialize sortable for this card if it's the first item
           if (cards.value[cardIndex].items.length === 1) {
             nextTick(() => {
               initializeSortableForCard(cardIndex);
             });
           }
 
-          // Scroll to the new item
           nextTick(() => {
             const cardElement = sortableRefs.value[cardIndex];
             if (cardElement) {
@@ -1590,22 +1709,6 @@
           confirmModalTitle.value = '';
           confirmModalMessage.value = '';
           pendingDeleteAction.value = null;
-        };
-
-        const focusThumbnailInput = (cardIndex, itemIndex) => {
-          const key = `${cardIndex}-${itemIndex}`;
-          const input = thumbnailInputRefs.value[key];
-          if (input) {
-            const currentValue = input.value;
-            const newValue = prompt('Enter image URL:', currentValue);
-            if (newValue !== null) {
-              cards.value[cardIndex].items[itemIndex].thumbnail = newValue;
-            }
-          }
-        };
-
-        const onThumbnailInputBlur = () => {
-          // This function can be used if needed for future enhancements
         };
 
         const visibleCards = computed(() => {
@@ -1675,7 +1778,13 @@
         };
 
         onMounted(() => {
-          initializeData();
+          loadTheme();
+          
+          // Try to load from localStorage first, fallback to sample data
+          if (!loadFromLocalStorage()) {
+            initializeData();
+          }
+          
           initializeSortable();
           window.addEventListener('resize', handleWindowResize);
         });
@@ -1684,7 +1793,14 @@
           window.removeEventListener('resize', handleWindowResize);
           document.removeEventListener('mousemove', handleResize);
           document.removeEventListener('mouseup', stopResize);
+          
+          if (saveTimeoutId.value) {
+            clearTimeout(saveTimeoutId.value);
+          }
         });
+
+        // Watch for changes to trigger auto-save
+        watch(cards, debouncedSave, { deep: true });
 
         // Watch for changes that require sortable re-initialization
         watch(cards, () => {
@@ -1696,16 +1812,20 @@
         return {
           cards,
           sortableRefs,
-          thumbnailInputRefs,
           visibleCards,
           isDarkMode,
           zoomLevel,
           cardsGrid,
+          urlInput,
           showConfirmModal,
           confirmModalTitle,
           confirmModalMessage,
           showImportDialog,
           importJsonText,
+          showUrlModal,
+          editingUrl,
+          isSaving,
+          saveStatus,
           // Resize functionality
           isResizing,
           editorWidth,
@@ -1719,8 +1839,7 @@
           deleteItem,
           confirmDelete,
           cancelDelete,
-          focusThumbnailInput,
-          onThumbnailInputBlur,
+          confirmReset,
           jsonOutput,
           copyToClipboard,
           toggleTheme,
@@ -1728,7 +1847,12 @@
           zoomOut,
           showImportModal,
           hideImportModal,
-          importJson
+          importJson,
+          editUrl,
+          saveUrl,
+          hideUrlModal,
+          editThumbnail,
+          autoResize
         };
       }
     }).mount('#app');
