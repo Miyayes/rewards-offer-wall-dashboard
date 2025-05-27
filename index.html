@@ -1127,12 +1127,14 @@
                 edit titles, descriptions, and URLs.</li>
               <li><strong>Import JSON:</strong> Click "Import JSON" to load an existing card configuration from a
                 previous session.</li>
-              <li><strong>Auto-Save:</strong> Your work is automatically saved to browser storage every few seconds.</li>
+              <li><strong>Auto-Save:</strong> Your work is automatically saved to browser storage every few seconds.
+              </li>
               <li><strong>Share Your Work:</strong> The JSON output below can be shared with
                 others to reproduce your card layout.</li>
             </ol>
             <div class="warning">
-              Your work is automatically saved to your browser's local storage, but exporting the JSON is recommended for backup.
+              Your work is automatically saved to your browser's local storage, but exporting the JSON is recommended
+              for backup.
             </div>
           </div>
 
@@ -1152,7 +1154,7 @@
           <div class="cards-grid" ref="cardsGrid">
             <div v-for="(card, cardIndex) in cards" :key="card.id"
               :class="['editor-card', { 'empty-card': card.items.length === 0 }]">
-              
+
               <!-- Empty Card State -->
               <div v-if="card.items.length === 0" class="empty-card-content">
                 <div class="empty-card-icon">📝</div>
@@ -1164,7 +1166,7 @@
               <div v-else>
                 <!-- Card Title - Matching Preview Style -->
                 <input v-model="card.title" class="editor-card-title" placeholder="Click to edit card title..." />
-                
+
                 <!-- Card Section - Matching Preview -->
                 <section class="editor-card-section">
                   <div :ref="el => sortableRefs[cardIndex] = el">
@@ -1190,10 +1192,12 @@
                         <button @click="editUrl(cardIndex, itemIndex)" class="item-control-btn url" title="Edit URL">
                           🔗 Link URL
                         </button>
-                        <button @click="editThumbnail(cardIndex, itemIndex)" class="item-control-btn image" title="Edit Image">
+                        <button @click="editThumbnail(cardIndex, itemIndex)" class="item-control-btn image"
+                          title="Edit Image">
                           📷 Thumbnail
                         </button>
-                        <button @click="confirmDeleteItem(cardIndex, itemIndex)" class="item-control-btn delete" title="Delete Item">
+                        <button @click="confirmDeleteItem(cardIndex, itemIndex)" class="item-control-btn delete"
+                          title="Delete Item">
                           🗑️ Delete Item
                         </button>
                       </div>
@@ -1284,8 +1288,8 @@
       <div class="modal url-modal" @click.stop>
         <h3>Edit URL</h3>
         <p>Enter the link URL for this item:</p>
-        <input v-model="editingUrl" class="url-input-modal" placeholder="https://example.com" type="url" 
-               @keyup.enter="saveUrl" @keyup.escape="hideUrlModal" ref="urlInput" />
+        <input v-model="editingUrl" class="url-input-modal" placeholder="https://example.com" type="url"
+          @keyup.enter="saveUrl" @keyup.escape="hideUrlModal" ref="urlInput" />
         <div class="modal-actions">
           <button @click="hideUrlModal" class="modal-btn cancel">Cancel</button>
           <button @click="saveUrl" class="modal-btn confirm" style="background: #34c759;">Save</button>
@@ -1327,7 +1331,7 @@
       setup() {
         const STORAGE_KEY = 'rewards-card-editor-workspace';
         const THEME_KEY = 'rewards-card-editor-theme';
-        
+
         const cards = ref([]);
         const sortableRefs = ref([]);
         const sortableInstances = ref([]);
@@ -1335,7 +1339,7 @@
         const zoomLevel = ref(1.0);
         const cardsGrid = ref(null);
         const urlInput = ref(null);
-        
+
         // Modal states
         const showConfirmModal = ref(false);
         const confirmModalTitle = ref('');
@@ -1370,7 +1374,7 @@
               timestamp: new Date().toISOString()
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-            
+
             isSaving.value = false;
             saveStatus.value = 'Auto-saved';
           } catch (error) {
@@ -1383,10 +1387,10 @@
           if (saveTimeoutId.value) {
             clearTimeout(saveTimeoutId.value);
           }
-          
+
           isSaving.value = true;
           saveStatus.value = 'Saving...';
-          
+
           saveTimeoutId.value = setTimeout(() => {
             saveToLocalStorage();
           }, 1000);
@@ -1400,12 +1404,12 @@
               cards.value = data.cards || [];
               cardIdCounter = data.cardIdCounter || 1;
               itemIdCounter = data.itemIdCounter || 1;
-              
+
               // Initialize sortable after loading
               nextTick(() => {
                 initializeSortable();
               });
-              
+
               return true;
             }
           } catch (error) {
@@ -1611,6 +1615,27 @@
                   description: "Download and explore to receive an exclusive Brave Wearable",
                   url: "https://decentraland.org/?utm_org=dcl&utm_source=brave&utm_medium=paid&utm_campaign=brandlaunch&utm_term=offerwall&utm_content=brave_wearable",
                   thumbnail: "https://rewards.brave.com/cards/decentraland.png"
+                },
+                {
+                  id: itemIdCounter++,
+                  title: "Pudgy Penguins: Crush It!",
+                  description: "450 Pop Points Bonus - Only for Brave users!",
+                  url: "https://www.pudgypop.com/signup?r=BAT",
+                  thumbnail: "https://rewards.brave.com/cards/thumb-pudgy-penguins-crush-it.png"
+                },
+                {
+                  id: itemIdCounter++,
+                  title: "Karate Combat: Game On!",
+                  description: "$KARATE Fans, Your Loyalty Pays Off! Grab VIP Benefits Now.",
+                  url: "https://www.karate.com/app",
+                  thumbnail: "https://rewards.brave.com/cards/thumb-karate-fans-your-loyalty.png"
+                },
+                {
+                  id: itemIdCounter++,
+                  title: "Believe in something, CHOMP it",
+                  description: "Get rewarded by sharing your opinions and beliefs.",
+                  url: "https://chomp.games/?utm_source=brave&utm_medium=offerwall",
+                  thumbnail: "https://rewards.brave.com/cards/thumb-believe-in-somthing-chomp-it.png"
                 }
               ]
             }
@@ -1779,12 +1804,12 @@
 
         onMounted(() => {
           loadTheme();
-          
+
           // Try to load from localStorage first, fallback to sample data
           if (!loadFromLocalStorage()) {
             initializeData();
           }
-          
+
           initializeSortable();
           window.addEventListener('resize', handleWindowResize);
         });
@@ -1793,7 +1818,7 @@
           window.removeEventListener('resize', handleWindowResize);
           document.removeEventListener('mousemove', handleResize);
           document.removeEventListener('mouseup', stopResize);
-          
+
           if (saveTimeoutId.value) {
             clearTimeout(saveTimeoutId.value);
           }
