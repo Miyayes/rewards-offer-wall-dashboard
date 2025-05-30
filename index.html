@@ -113,6 +113,7 @@
       display: flex;
       height: 100vh;
       position: relative;
+      padding-top: 4rem;
     }
 
     .editor-panel {
@@ -234,9 +235,9 @@
     }
 
     .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
+      /* position: fixed; */
+      /* top: 20px;
+      right: 20px; */
       z-index: 1000;
       padding: var(--leo-spacing-l) var(--leo-spacing-xl);
       background: var(--surface-color);
@@ -304,34 +305,28 @@
     .add-card-btn {
       background: linear-gradient(135deg, var(--leo-color-primitive-primary-40) 0%, #6366f1 100%);
       color: white;
-      box-shadow: 0 4px 12px rgba(67, 79, 207, 0.3);
     }
 
     .add-card-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(67, 79, 207, 0.4);
     }
 
     .import-btn {
       background: linear-gradient(135deg, #34c759 0%, #10b981 100%);
       color: white;
-      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
     }
 
     .import-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
     }
 
     .reset-btn {
       background: linear-gradient(135deg, #ff9500 0%, #ff6b35 100%);
       color: white;
-      box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
     }
 
     .reset-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
     }
 
     .autosave-indicator {
@@ -659,12 +654,10 @@
       font: var(--leo-font-small-semibold);
       cursor: pointer;
       transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3);
     }
 
     .add-item-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.4);
     }
 
     .delete-card-btn {
@@ -677,12 +670,10 @@
       font: var(--leo-font-small-semibold);
       white-space: nowrap;
       transition: all 0.2s;
-      box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3);
     }
 
     .delete-card-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
     }
 
     .empty-card-content {
@@ -907,12 +898,10 @@
       cursor: pointer;
       font: var(--leo-font-default-semibold);
       transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
     }
 
     .copy-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
     }
 
     .empty-state {
@@ -1102,14 +1091,113 @@
         width: 100%;
       }
     }
+
+    .navbar {
+      height: 4rem;
+      background-color: var(--leo-color-container-background);
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--leo-color-divider-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--leo-effect-elevation-01);
+      transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .navbar-logo {
+      height: 28px;
+      width: auto;
+    }
+
+    /* Default light logo */
+    .navbar-logo[src*="brave-rewards-logo-light.svg"] {
+      display: block;
+    }
+
+    .navbar-logo[src*="brave-rewards-logo-dark.svg"] {
+      display: none;
+    }
+
+    /* Dark theme - hide light logo, show dark logo */
+    [data-theme="dark"] .navbar-logo[src*="brave-rewards-logo-light.svg"] {
+      display: none;
+    }
+
+    [data-theme="dark"] .navbar-logo[src*="brave-rewards-logo-dark.svg"] {
+      display: block;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar-menu a {
+      text-decoration: none;
+      color: var(--leo-color-text-primary);
+      font: var(--leo-font-default-semibold);
+      transition: color 0.2s ease;
+    }
+
+    .navbar-menu a:hover {
+      color: var(--leo-color-primitive-primary-40);
+    }
+
+    .navbar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--leo-color-text-primary);
+      transition: color 0.2s ease;
+    }
+
+    .navbar-toggle:hover {
+      color: var(--leo-color-primitive-primary-40);
+    }
+
+    @media (max-width: 768px) {
+      .navbar-menu {
+        display: none;
+      }
+
+      .navbar-toggle {
+        display: block;
+      }
+    }
   </style>
 </head>
 
 <body data-theme="light">
   <div id="app">
-    <button @click="toggleTheme" class="theme-toggle">
-      {{ isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
-    </button>
+
+    <nav class="navbar">
+      <img src="images/brave-rewards-logo-light.svg" class="navbar-logo" alt="Logo" />
+      <img src="images/brave-rewards-logo-dark.svg" class="navbar-logo" alt="Logo" />
+
+      <!-- <ul class="navbar-menu">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul> -->
+
+      <button @click="toggleTheme" class="theme-toggle">
+        {{ isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode' }}
+      </button>
+
+      <button class="navbar-toggle" aria-label="Toggle navigation">
+        ☰
+      </button>
+    </nav>
 
     <div class="app">
       <!-- Editor Panel -->
